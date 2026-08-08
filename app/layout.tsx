@@ -6,8 +6,8 @@ import React, { ReactNode } from 'react';
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "IDE",
-  description: "Online html, css, and javascript editor and compiler.",
+  title: "NEXT IDE",
+  description: "A polished monochrome playground for HTML, CSS, and JavaScript.",
   icons: {
     icon: "/logo.png"
   },
@@ -15,7 +15,7 @@ export const metadata = {
 };
 
 export const viewport = {
-  themeColor: "hsl(222.2 84% 4.9%)",
+  themeColor: "#050505",
   width: "device-width",
   initialScale: 1.0,
   maximumScale: 1.0,
