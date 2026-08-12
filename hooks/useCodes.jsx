@@ -1,12 +1,13 @@
-const { useState } = require("react");
+"use client";
+import { useState } from "react";
 
 const useCodes = () => {
     const [codes, setCodes] = useState("");
-    
+
     const setCodesValue = (value) => {
         setCodes(value);
-    }
-    return [ codes, setCodesValue ];
-}
+    };
+    return [codes, setCodesValue];
+};
 
 export default useCodes;

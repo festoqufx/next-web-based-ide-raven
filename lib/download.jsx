@@ -1,9 +1,9 @@
-export const download = ({ src }) => {
-    const blob = new Blob([src], { type: 'text/html' });
+export const download = ({ src, filename = "index.html", type = "text/html" }) => {
+    const blob = new Blob([src], { type });
     const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
-    link.download = 'i-de_index.html';
+    link.download = filename;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

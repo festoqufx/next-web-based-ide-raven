@@ -1,14 +1,7 @@
-const { useState } = require("react");
+"use client";
+import { DEFAULT_HTML } from "@/lib/constants";
+import useLocalStorage from "./useLocalStorage";
 
-const useHtml = () => {
-    const [html, setHtml] = useState(`<button onClick="handleClick()">
-  Start Here
-</button>`);
-
-    const setHtmlValue = (value) => {
-        setHtml(value);
-    }
-    return [html, setHtmlValue];
-}
+const useHtml = () => useLocalStorage("ide.html", DEFAULT_HTML);
 
 export default useHtml;

@@ -1,126 +1,134 @@
 "use client";
-import { useEffect, useCallback, memo } from 'react';
-import { download } from '@/lib/download';
-import { loadLanguage } from "@uiw/codemirror-extensions-langs";
-import CodeMirror from '@uiw/react-codemirror';
+import { useEffect, useCallback, useMemo, memo } from "react";
+import { download } from "@/lib/download";
+import { compile } from "@/lib/compile";
+import { openInNewTab } from "@/lib/preview";
+import { DEFAULT_HTML, DEFAULT_CSS, DEFAULT_JS } from "@/lib/constants";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
-import Footer from '@/components/Footer';
-import { Button } from './ui/button';
-import { PanelTop, Save, Sparkles } from 'lucide-react';
-import { toast } from 'sonner';
-import { cmOptions } from '@/lib/cmOptions';
-import { ScrollArea, ScrollBar } from './ui/scroll-area';
-import useCodes from '@/hooks/useCodes';
-import useHtml from '@/hooks/useHtml';
-import useCss from '@/hooks/useCss';
-import useJs from '@/hooks/useJs';
-
-const codeTypes = ['html', 'css', 'javascript'];
+import { toast } from "sonner";
+import { PanelTop, Code2 } from "lucide-react";
+import Footer from "@/components/Footer";
+import CodeEditor from "@/components/CodeEditor";
+import PreviewPane from "@/components/PreviewPane";
+import useCodes from "@/hooks/useCodes";
+import useHtml from "@/hooks/useHtml";
+import useCss from "@/hooks/useCss";
+import useJs from "@/hooks/useJs";
 
 const Editor = () => {
-    const [html, setHtmlValue] = useHtml("");
-    const [css, setCssValue] = useCss("");
-    const [js, setJsValue] = useJs("");
-    const [code, setCodesValue] = useCodes("");
+  const [html, setHtmlValue] = useHtml();
+  const [css, setCssValue] = useCss();
+  const [js, setJsValue] = useJs();
+  const [code, setCodesValue] = useCodes();
 
-    const handleDownload = useCallback(() => {
-        download({ src: code });
-        toast.success("Downloaded!");
-    }, [code]);
+  const compileCode = useCallback(() => {
+    setCodesValue(compile({ html, css, js }));
+  }, [html, css, js, setCodesValue]);
 
-    const compileCode = useCallback(() => {
-        setCodesValue(`
-            <!DOCTYPE html>
-            <html lang="en">
-                <head></head>
-                <style>* { margin: 0; padding: 0; box-sizing: border-box; }${css}</style>
-                <body>
-                    <div>${html}</div>
-                    <script>${js}</script>
-                </body>
-            </html>
-        `);
-    }, [html, css, js, setCodesValue]);
+  // Compile live as soon as any pane changes.
+  useEffect(() => {
+    compileCode();
+  }, [compileCode]);
 
-    useEffect(() => {
-        compileCode();
-    }, [html, css, js, compileCode]);
+  const handleChange = useCallback(
+    (val, type) => {
+      if (type === "html") setHtmlValue(val);
+      else if (type === "css") setCssValue(val);
+      else setJsValue(val);
+    },
+    [setHtmlValue, setCssValue, setJsValue]
+  );
 
-    const handleChange = useCallback((val, type) => {
-        if (type === 'html') setHtmlValue(val);
-        else if (type === 'css') setCssValue(val);
-        else setJsValue(val);
-    }, [setHtmlValue, setCssValue, setJsValue]);
+  const handleDownload = useCallback(() => {
+    download({ src: code, filename: "index.html" });
+    toast.success("Compiled page downloaded");
+  }, [code]);
 
-    const renderCodePanel = useCallback((type) => {
-        const label = type === 'html' ? 'Markup' : type === 'css' ? 'Styles' : 'Logic';
-        return (
-            <ResizablePanel key={type} defaultSize={32}>
-                <div className="flex h-full flex-col bg-zinc-50">
-                    <div className="flex items-center justify-between border-b border-black/10 bg-white/90 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.25em] text-zinc-500">
-                        <span>{type.toUpperCase()}</span>
-                        <span>{label}</span>
-                    </div>
-                    <ScrollArea className="flex-1">
-                        <CodeMirror
-                            {...cmOptions}
-                            value={type === 'html' ? html : (type === 'css' ? css : js)}
-                            placeholder={type.toUpperCase()}
-                            onChange={(val) => handleChange(val, type)}
-                            extensions={[loadLanguage(type)]}
-                        />
-                        <ScrollBar orientation="horizontal" />
-                    </ScrollArea>
-                </div>
-            </ResizablePanel>
-        );
-    }, [html, css, js, handleChange]);
+  const handleOpenPreview = useCallback(() => {
+    openInNewTab(code);
+  }, [code]);
 
-    return (
-        <div className="flex h-full flex-col bg-[linear-gradient(135deg,_#f8f8f8_0%,_#eeeeee_100%)]">
-            <div className="flex items-center justify-between border-b border-black/10 bg-white/70 px-4 py-3 text-sm text-zinc-700">
-                <div className="flex items-center gap-2">
-                    <div className="rounded-full border border-black/10 bg-black p-2 text-white">
-                        <PanelTop className="h-4 w-4" />
-                    </div>
-                    <div>
-                        <p className="font-semibold text-zinc-950">Workspace</p>
-                        <p className="text-xs text-zinc-500">Three panes for fast iteration</p>
-                    </div>
-                </div>
-                <div className="hidden items-center gap-2 rounded-full border border-black/10 bg-zinc-50 px-3 py-1 text-xs font-medium text-zinc-600 sm:flex">
-                    <Sparkles className="h-3.5 w-3.5" />
-                    Monochrome preview
-                </div>
-            </div>
-            <ResizablePanelGroup direction="vertical" className="flex-1">
-                <ResizablePanel defaultSize={60}>
-                    <ResizablePanelGroup direction="horizontal" className="h-full">
-                        {renderCodePanel("html")}
-                        <ResizableHandle withHandle />
-                        {renderCodePanel("css")}
-                        <ResizableHandle withHandle />
-                        {renderCodePanel("javascript")}
-                    </ResizablePanelGroup>
-                </ResizablePanel>
+  const handleReset = useCallback(() => {
+    setHtmlValue(DEFAULT_HTML);
+    setCssValue(DEFAULT_CSS);
+    setJsValue(DEFAULT_JS);
+    setCodesValue(compile({ html: DEFAULT_HTML, css: DEFAULT_CSS, js: DEFAULT_JS }));
+    toast.success("Reset to default template");
+  }, [setHtmlValue, setCssValue, setJsValue, setCodesValue]);
 
-                <ResizableHandle withHandle />
+  // Keyboard shortcuts: Ctrl/Cmd+S → download, Ctrl/Cmd+Enter → run in new tab.
+  useEffect(() => {
+    const onKeyDown = (e) => {
+      const mod = e.ctrlKey || e.metaKey;
+      if (mod && e.key.toLowerCase() === "s") {
+        e.preventDefault();
+        handleDownload();
+      } else if (mod && e.key === "Enter") {
+        e.preventDefault();
+        handleOpenPreview();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [handleDownload, handleOpenPreview]);
 
-                <ResizablePanel defaultSize={40} className="bg-zinc-100 p-2">
-                    <div className="flex h-full flex-col overflow-hidden rounded-[20px] border border-black/10 bg-white shadow-inner">
-                        <div className="flex items-center justify-between border-b border-black/10 bg-zinc-50 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.25em] text-zinc-500">
-                            <span>Preview</span>
-                            <span>Live</span>
-                        </div>
-                        <iframe className="h-full w-full bg-white" srcDoc={code} />
-                    </div>
-                </ResizablePanel>
-                <Footer onClear={() => { setHtmlValue(""); setCssValue(""); setJsValue(""); setCodesValue(""); }} >
-                    <Button size="icon" variant="outline" onClick={handleDownload} className="border-black/10 bg-black text-white hover:bg-white hover:text-black"><Save className="h-4 w-4" /></Button>
-                </Footer>
-            </ResizablePanelGroup>
+  const stats = useMemo(() => {
+    const lines = (html + css + js).split("\n").length;
+    const chars = html.length + css.length + js.length;
+    return `${lines.toLocaleString()} lines · ${chars.toLocaleString()} chars`;
+  }, [html, css, js]);
+
+  return (
+    <div className="flex h-full flex-col">
+      <div className="flex items-center justify-between gap-3 border-b border-black/10 bg-white/85 px-4 py-3">
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-black/10 bg-black text-white shadow-sm">
+            <PanelTop className="h-4 w-4" />
+          </div>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-semibold text-zinc-950">
+              Workspace
+            </p>
+            <p className="truncate text-xs text-zinc-500">
+              HTML · CSS · JavaScript with live preview
+            </p>
+          </div>
         </div>
-    );
+        <span className="hidden items-center gap-1.5 rounded-full border border-black/10 bg-zinc-50 px-3 py-1 text-xs font-medium text-zinc-600 md:flex">
+          <Code2 className="h-3.5 w-3.5" />
+          Ctrl + S to download
+        </span>
+      </div>
+
+      <div className="min-h-0 flex-1">
+        <ResizablePanelGroup direction="vertical" className="h-full">
+          <ResizablePanel defaultSize={62} minSize={30}>
+            <ResizablePanelGroup direction="horizontal" className="h-full">
+              <ResizablePanel defaultSize={34} minSize={20}>
+                <CodeEditor type="html" value={html} onChange={handleChange} />
+              </ResizablePanel>
+              <ResizableHandle withHandle />
+              <ResizablePanel defaultSize={33} minSize={20}>
+                <CodeEditor type="css" value={css} onChange={handleChange} />
+              </ResizablePanel>
+              <ResizableHandle withHandle />
+              <ResizablePanel defaultSize={33} minSize={20}>
+                <CodeEditor type="javascript" value={js} onChange={handleChange} />
+              </ResizablePanel>
+            </ResizablePanelGroup>
+          </ResizablePanel>
+
+          <ResizableHandle withHandle />
+
+          <ResizablePanel defaultSize={38} minSize={20} className="bg-zinc-100 p-2">
+            <PreviewPane code={code} onOpenNewTab={handleOpenPreview} />
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      </div>
+
+      <Footer onClear={handleReset} onDownload={handleDownload} stats={stats} />
+    </div>
+  );
 };
 
 export default memo(Editor);

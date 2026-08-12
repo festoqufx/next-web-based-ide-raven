@@ -1,27 +1,18 @@
 "use client";
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 export default function useMediaQuery(width) {
-  const [targetReached, setTargetReached] = useState(false);
-
-  const updateTarget = useCallback((e) => {
-    if (e.matches) {
-      setTargetReached(true);
-    } else {
-      setTargetReached(false);
-    }
-  }, []);
+  const query = `(max-width: ${width}px)`;
+  const [matches, setMatches] = useState(false);
 
   useEffect(() => {
-    const media = window.matchMedia(`(max-width: ${width}px)`);
-    media.addListener(updateTarget);
+    const media = window.matchMedia(query);
+    const update = (e) => setMatches(e.matches);
 
-    if (media.matches) {
-      setTargetReached(true);
-    }
+    setMatches(media.matches);
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, [query]);
 
-    return () => media.removeListener(updateTarget);
-  }, []);
-
-  return targetReached;
-};
+  return matches;
+}

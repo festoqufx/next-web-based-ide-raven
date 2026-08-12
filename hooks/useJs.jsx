@@ -1,14 +1,7 @@
-const { useState } = require("react");
+"use client";
+import { DEFAULT_JS } from "@/lib/constants";
+import useLocalStorage from "./useLocalStorage";
 
-const useJs = () => {
-    const [js, setJs] = useState(`const handleClick = () => {
-  alert("button clicked");
-}`);
-
-    const setJsValue = (value) => {
-        setJs(value);
-    }
-    return [js, setJsValue];
-}
+const useJs = () => useLocalStorage("ide.js", DEFAULT_JS);
 
 export default useJs;
