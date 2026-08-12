@@ -1,182 +1,325 @@
 export const DEFAULT_HTML = `<main class="wrap">
-  <button class="btn-3d btn-1">
-    <div class="inner">
-      <svg viewBox="0 0 24 24">
-        <path d="M8 5v14l11-7z" />
-      </svg>
-      <div class="label">Start</div>
+  <div class="card">
+    <div class="card-inner">
+      <div class="badge font-mono">01 / FEATURE</div>
+      <h2 class="title">Monochrome IDE</h2>
+      <p class="desc">A minimal, fast, and focused sandbox for crafting web interfaces.</p>
+      <button class="btn btn-primary" id="btn-1">
+        <span>Execute</span>
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </button>
     </div>
-  </button>
-  <button class="btn-3d btn-2">
-    <div class="inner">
-      <svg viewBox="0 0 24 24">
-        <path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-      </svg>
-      <div class="label">Favorite</div>
+  </div>
+
+  <div class="card">
+    <div class="card-inner">
+      <div class="badge font-mono">02 / INTERACTION</div>
+      <h2 class="title">Live Feedback</h2>
+      <p class="desc">Real-time compilation with instant console output and error detection.</p>
+      <button class="btn btn-outline" id="btn-2">
+        <span>Log Output</span>
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+          <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
+          <path d="M13 2v7h7"/>
+        </svg>
+      </button>
     </div>
-  </button>
-  <button class="btn-3d btn-3">
-    <div class="inner">
-      <svg viewBox="0 0 24 24">
-        <path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-      </svg>
-      <div class="label">Confirm</div>
-    </div>
-  </button>
-  <button class="btn-3d btn-4">
-    <div class="inner">
-      <svg viewBox="0 0 24 24">
-        <path d="M19.14 12.94c.04-.31.06-.63.06-.94s-.02-.63-.06-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.025 7.025 0 0 0-1.62-.94l-.36-2.54A.5.5 0 0 0 14 2h-4a.5.5 0 0 0-.5.42l-.36 2.54c-.59.23-1.13.54-1.62.94l-2.39-.96a.5.5 0 0 0-.6.22L2.61 8.84a.5.5 0 0 0 .12.64l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32c.14.24.43.34.7.22l2.39-.96c.49.4 1.03.71 1.62.94l.36 2.54a.5.5 0 0 0 .5.42h4a.5.5 0 0 0 .5-.42l.36-2.54c.59-.23 1.13-.54 1.62-.94l2.39.96c.27.11.56.02.7-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58zM12 15.5A3.5 3.5 0 1 1 15.5 12 3.5 3.5 0 0 1 12 15.5z" />
-      </svg>
-      <div class="label">Settings</div>
-    </div>
-  </button>
-</main>
-`;
+  </div>
+</main>`;
 
 export const DEFAULT_CSS = `:root {
---bg: #0f1724;
---accent1: #06b6d4;
---accent2: #7c3aed;
---accent3: #f59e0b;
---accent4: #10b981;
---light: #fff;
-font-family: Inter, system-ui, sans-serif;
+  --bg-color: #000000;
+  --surface-color: #09090b;
+  --border-color: #27272a;
+  --text-primary: #ffffff;
+  --text-secondary: #a1a1aa;
 }
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 body {
-margin: 0;
-display: flex;
-align-items: center;
-justify-content: center;
-height: 100vh;
-background: radial-gradient(circle at top, #14213d, #000);
-color: var(--light);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  min-h: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
 }
+
 .wrap {
-display: grid;
-grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-gap: 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  max-width: 720px;
+  width: 100%;
 }
-.btn-3d {
-background: none;
-border: none;
-perspective: 1000px;
-cursor: pointer;
-position: relative;
+
+.card {
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 24px;
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
-.inner {
-background: rgba(255, 255, 255, 0.05);
-border: 1px solid rgba(255, 255, 255, 0.1);
-border-radius: 14px;
-height: 130px;
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-gap: 10px;
-transform-style: preserve-3d;
-transition: transform 0.4s cubic-bezier(0.18, 0.9, 0.32, 1), box-shadow 0.3s;
-box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+
+.card:hover {
+  border-color: #52525b;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(255, 255, 255, 0.03);
 }
-.btn-3d:hover .inner {
-transform: rotateX(12deg) rotateY(-10deg) translateY(-8px);
-box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
+
+.badge {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: #71717a;
+  margin-bottom: 12px;
 }
-.btn-3d:active .inner {
-transform: translateY(2px) scale(0.97);
+
+.title {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+}
+
+.desc {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-primary {
+  background: #ffffff;
+  color: #000000;
+  border: 1px solid #ffffff;
+}
+
+.btn-primary:hover {
+  background: #e4e4e7;
+  border-color: #e4e4e7;
+}
+
+.btn-outline {
+  background: transparent;
+  color: #ffffff;
+  border: 1px solid #3f3f46;
+}
+
+.btn-outline:hover {
+  background: #18181b;
+  border-color: #52525b;
+}`;
+
+export const DEFAULT_JS = `// Interactive button actions with live console feedback
+document.getElementById("btn-1").addEventListener("click", () => {
+  console.log("Action triggered: Execute initialized successfully.");
+});
+
+document.getElementById("btn-2").addEventListener("click", () => {
+  console.log("Console Log: Live preview state synchronized.");
+  console.warn("System Notice: Monochrome styling applied.");
+});`;
+
+export const PRESET_TEMPLATES = [
+  {
+    id: "default",
+    name: "Monochrome Cards",
+    html: DEFAULT_HTML,
+    css: DEFAULT_CSS,
+    js: DEFAULT_JS,
+  },
+  {
+    id: "minimal_hero",
+    name: "Minimal Hero Section",
+    html: `<header class="hero">
+  <div class="tag">MONOCHROME EDITION</div>
+  <h1 class="headline">Design Without Distraction</h1>
+  <p class="subhead">A high-contrast workspace engineered for focus, elegance, and extreme performance.</p>
+  <div class="cta-group">
+    <button class="btn btn-main" id="btn-hero">Get Started</button>
+    <button class="btn btn-sub" id="btn-docs">Documentation</button>
+  </div>
+</header>`,
+    css: `body {
+  background: #000;
+  color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 32px;
+}
+.hero {
+  text-align: center;
+  max-width: 600px;
+}
+.tag {
+  display: inline-block;
+  font-family: monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  padding: 4px 12px;
+  border: 1px solid #333;
+  border-radius: 20px;
+  color: #888;
+  margin-bottom: 20px;
+}
+.headline {
+  font-size: 42px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  margin-bottom: 16px;
+}
+.subhead {
+  font-size: 16px;
+  color: #a1a1aa;
+  line-height: 1.6;
+  margin-bottom: 32px;
+}
+.cta-group {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+.btn {
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-main {
+  background: #fff;
+  color: #000;
+  border: none;
+}
+.btn-main:hover {
+  background: #ccc;
+}
+.btn-sub {
+  background: transparent;
+  color: #fff;
+  border: 1px solid #333;
+}
+.btn-sub:hover {
+  background: #111;
+  border-color: #666;
+}`,
+    js: `document.getElementById("btn-hero").addEventListener("click", () => {
+  console.log("Hero CTA clicked! Welcome to Monochrome IDE.");
+});
+document.getElementById("btn-docs").addEventListener("click", () => {
+  console.log("Opening documentation...");
+});`,
+  },
+  {
+    id: "interactive_counter",
+    name: "Interactive Counter",
+    html: `<div class="counter-card">
+  <span class="label">COUNTER</span>
+  <h1 id="count-value">0</h1>
+  <div class="btn-grid">
+    <button id="btn-decrement">-</button>
+    <button id="btn-reset">Reset</button>
+    <button id="btn-increment">+</button>
+  </div>
+</div>`,
+    css: `body {
+  background: #09090b;
+  color: #fafafa;
+  font-family: monospace;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+.counter-card {
+  background: #000;
+  border: 1px solid #27272a;
+  padding: 40px;
+  border-radius: 16px;
+  text-align: center;
+  width: 320px;
 }
 .label {
-font-weight: 600;
-font-size: 16px;
-color: var(--light);
+  font-size: 12px;
+  color: #71717a;
+  letter-spacing: 0.2em;
 }
-svg {
-width: 50px;
-height: 50px;
-fill: var(--light);
-transition: transform 0.6s ease, fill 0.3s ease, filter 0.4s ease;
-filter: drop-shadow(0 0 0 transparent);
+#count-value {
+  font-size: 64px;
+  margin: 20px 0;
+  font-weight: 700;
 }
-
-/* Accent per knop */
-.btn-1 .inner {
-background: linear-gradient(145deg, #022c43, #053f5e);
+.btn-grid {
+  display: flex;
+  gap: 8px;
 }
-.btn-2 .inner {
-background: linear-gradient(145deg, #24104f, #3a0ca3);
+button {
+  flex: 1;
+  padding: 10px;
+  background: #18181b;
+  color: #fff;
+  border: 1px solid #27272a;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: bold;
 }
-.btn-3 .inner {
-background: linear-gradient(145deg, #5a3d00, #f59e0b);
-}
-.btn-4 .inner {
-background: linear-gradient(145deg, #004d40, #10b981);
-}
-
-.btn-1:hover svg {
-transform: scale(1.3) rotate(10deg);
-fill: #06b6d4;
-filter: drop-shadow(0 0 10px #06b6d4);
-}
-.btn-2:hover svg {
-transform: scale(1.3) rotate(10deg);
-fill: #7c3aed;
-filter: drop-shadow(0 0 10px #7c3aed);
-}
-.btn-3:hover svg {
-transform: scale(1.3) rotate(10deg);
-fill: #f59e0b;
-filter: drop-shadow(0 0 10px #f59e0b);
-}
-.btn-4:hover svg {
-transform: scale(1.3) rotate(10deg);
-fill: #10b981;
-filter: drop-shadow(0 0 10px #10b981);
-}
-
-/* animatie bij klik */
-.pulse {
-animation: pulse 0.5s ease, glow 0.5s ease;
-}
-@keyframes pulse {
-0% {
-transform: scale(1);
-}
-50% {
-transform: scale(1.25);
-}
-100% {
-transform: scale(1);
-}
-}
-@keyframes glow {
-0% {
-filter: drop-shadow(0 0 0 transparent);
-}
-50% {
-filter: drop-shadow(0 0 14px currentColor);
-}
-100% {
-filter: drop-shadow(0 0 0 transparent);
-}
-}
-`;
-
-export const DEFAULT_JS = `
-document.querySelectorAll(".btn-3d").forEach((btn) => {
-btn.addEventListener("click", () => {
-const svg = btn.querySelector("svg");
-svg.classList.add("pulse");
-setTimeout(() => svg.classList.remove("pulse"), 500);
+button:hover {
+  background: #27272a;
+}`,
+    js: `let count = 0;
+const val = document.getElementById("count-value");
+document.getElementById("btn-increment").addEventListener("click", () => {
+  count++;
+  val.innerText = count;
+  console.log("Count increased to:", count);
 });
+document.getElementById("btn-decrement").addEventListener("click", () => {
+  count--;
+  val.innerText = count;
+  console.log("Count decreased to:", count);
 });
-`;
+document.getElementById("btn-reset").addEventListener("click", () => {
+  count = 0;
+  val.innerText = count;
+  console.log("Count reset to 0");
+});`,
+  },
+];
 
 export const CODE_TYPES = ["html", "css", "javascript"];
 
 export const CODE_LABELS = {
-  html: "Markup",
-  css: "Styles",
-  javascript: "Logic",
+  html: "HTML Markup",
+  css: "CSS Styles",
+  javascript: "JS Logic",
 };
 
 export const CODE_FILENAMES = {
@@ -184,4 +327,3 @@ export const CODE_FILENAMES = {
   css: "styles.css",
   javascript: "script.js",
 };
-
