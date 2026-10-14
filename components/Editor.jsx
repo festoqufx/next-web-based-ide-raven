@@ -147,12 +147,12 @@ const Editor = () => {
           <button
             type="button"
             onClick={toggleTheme}
-            className="flex h-8 items-center gap-1.5 rounded-md border border-zinc-300 bg-white px-2.5 text-xs font-medium text-zinc-700 shadow-sm transition-colors hover:bg-zinc-200 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
+            className="flex h-8 items-center gap-1.5 rounded-md border border-zinc-300 bg-zinc-50 px-2.5 text-xs font-medium text-zinc-700 shadow-sm transition-all duration-200 hover:border-zinc-400 hover:bg-zinc-100 hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white active:translate-y-px dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:border-zinc-600 dark:hover:bg-zinc-700 dark:hover:text-white dark:focus-visible:ring-zinc-500 dark:focus-visible:ring-offset-zinc-950"
             title={`Switch to ${mounted && resolvedTheme === "dark" ? "Light" : "Dark"} Mode`}
           >
             {mounted && resolvedTheme === "dark" ? (
               <>
-                <Sun className="h-3.5 w-3.5 text-amber-400" />
+                <Sun className="h-3.5 w-3.5 text-amber-500 dark:text-amber-400" />
                 <span className="hidden sm:inline">Light Mode</span>
               </>
             ) : (
@@ -202,10 +202,10 @@ const Editor = () => {
           <button
             type="button"
             onClick={handleDownload}
-            className="flex h-8 items-center gap-1.5 rounded-md bg-zinc-900 px-3.5 text-xs font-bold text-white shadow-sm transition-colors hover:bg-zinc-700 dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-200"
+            className="flex h-8 items-center gap-1.5 rounded-md bg-zinc-900 px-3.5 text-xs font-bold text-white shadow-sm transition-all duration-200 hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white active:translate-y-px dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus-visible:ring-zinc-500 dark:focus-visible:ring-offset-zinc-950"
             title="Download compiled HTML (Ctrl+S)"
           >
-            <Download className="h-3.5 w-3.5" />
+            <Download className="h-3.5 w-3.5 text-white dark:text-zinc-900" />
             <span>Download</span>
           </button>
         </div>

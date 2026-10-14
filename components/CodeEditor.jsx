@@ -1,4 +1,5 @@
 "use client";
+import { useCallback, useMemo } from "react";
 import { Copy } from "lucide-react";
 import { toast } from "sonner";
 import { loadLanguage } from "@uiw/codemirror-extensions-langs";
@@ -15,13 +16,41 @@ const DOT = {
 
 export default function CodeEditor({ type, value, onChange }) {
   const { resolvedTheme } = useTheme();
+  const codeValue = value ?? "";
+  const label = CODE_LABELS[type] ?? "Code";
+  const languageTag = type === "javascript" ? "JS" : type.toUpperCase();
+  const hasValue = codeValue.trim().length > 0;
+  const cmOptions = useMemo(() => getCmOptions(resolvedTheme), [resolvedTheme]);
+  const languageExtension = useMemo(() => loadLanguage(type), [type]);
 
-  const handleCopy = () => {
+  const stats = useMemo(() => {
+    const lines = codeValue.length > 0 ? codeValue.split("\n").length : 0;
+    return `${lines.toLocaleString()} lines · ${codeValue.length.toLocaleString()} chars`;
+  }, [codeValue]);
+
+  const handleCopy = useCallback(() => {
+    if (!hasValue) {
+      toast.info("Nothing to copy");
+      return;
+    }
+
+    if (!navigator?.clipboard) {
+      toast.error("Clipboard API is unavailable in this browser");
+      return;
+    }
+
     navigator.clipboard
-      .writeText(value)
-      .then(() => toast.success(`${CODE_LABELS[type]} copied to clipboard`))
+      .writeText(codeValue)
+      .then(() => toast.success(`${label} copied to clipboard`))
       .catch(() => toast.error("Could not copy to clipboard"));
-  };
+  }, [codeValue, hasValue, label]);
+
+  const handleEditorChange = useCallback(
+    (nextValue) => {
+      onChange(nextValue, type);
+    },
+    [onChange, type]
+  );
 
   return (
     <div className="flex h-full flex-col overflow-hidden bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
@@ -32,18 +61,22 @@ export default function CodeEditor({ type, value, onChange }) {
             aria-hidden
           />
           <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-zinc-800 dark:text-zinc-200">
-            {type === "javascript" ? "JS" : type.toUpperCase()}
+            {languageTag}
           </span>
           <span className="hidden text-[11px] text-zinc-500 sm:inline dark:text-zinc-400">
-            · {CODE_LABELS[type]}
+            · {label}
+          </span>
+          <span className="hidden text-[11px] text-zinc-500 md:inline dark:text-zinc-400">
+            · {stats}
           </span>
         </div>
         <button
           type="button"
           onClick={handleCopy}
+          disabled={!hasValue}
           aria-label={`Copy ${type} code`}
-          title={`Copy ${type.toUpperCase()}`}
-          className="flex h-6 shrink-0 items-center gap-1 rounded border border-zinc-300 bg-zinc-200 px-2 text-[10px] font-medium text-zinc-600 shadow-sm transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-100 dark:hover:text-zinc-950"
+          title={`Copy ${languageTag}`}
+          className="flex h-6 shrink-0 items-center gap-1 rounded border border-zinc-300 bg-zinc-200 px-2 text-[10px] font-medium text-zinc-600 shadow-sm transition-colors hover:bg-zinc-100 hover:text-zinc-900 disabled:cursor-not-allowed disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-100 dark:hover:text-zinc-950"
         >
           <Copy className="h-3 w-3" />
           <span className="hidden sm:inline">Copy</span>
@@ -52,15 +85,14 @@ export default function CodeEditor({ type, value, onChange }) {
 
       <div className="flex-1 overflow-hidden relative bg-zinc-50 dark:bg-zinc-950">
         <CodeMirror
-          {...getCmOptions(resolvedTheme)}
-          value={value}
-          placeholder={type.toUpperCase()}
-          onChange={(val) => onChange(val, type)}
-          extensions={[loadLanguage(type)]}
+          {...cmOptions}
+          value={codeValue}
+          placeholder={languageTag}
+          onChange={handleEditorChange}
+          extensions={languageExtension ? [languageExtension] : []}
           className="h-full w-full"
         />
       </div>
     </div>
   );
 }
-

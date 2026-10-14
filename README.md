@@ -6,6 +6,13 @@
 >
 >
 
+## Highlights
+
+- Live HTML/CSS/JS editing with instant preview updates.
+- Per-editor language-aware workspace with copy actions and real-time code stats (lines/chars).
+- Fast editing experience powered by memoized editor options and language extensions.
+- Built-in utilities for formatting, reset, theme switching, download, and opening preview in a new tab.
+
 
 <p align="center">
   <img src="https://github.com/afri-spaces/Web-IDE/assets/112781610/50267ef5-ff84-489e-b529-5eef91ab8b2a" alt="Screenshot 1" width="400" />
