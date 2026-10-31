@@ -8,7 +8,7 @@ import { openInNewTab } from "@/lib/preview";
 import { formatCode } from "@/lib/formatter";
 import { DEFAULT_HTML, DEFAULT_CSS, DEFAULT_JS } from "@/lib/constants";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
-import { Copy, Download, ExternalLink, Wand2, RotateCcw, Sun, Moon } from "lucide-react";
+import { Copy, Download, ExternalLink, Wand2, RotateCcw } from "lucide-react";
 import Footer from "@/components/Footer";
 import CodeEditor from "@/components/CodeEditor";
 import PreviewPane from "@/components/PreviewPane";
@@ -17,7 +17,6 @@ import useCodes from "@/hooks/useCodes";
 import useHtml from "@/hooks/useHtml";
 import useCss from "@/hooks/useCss";
 import useJs from "@/hooks/useJs";
-import { useTheme } from "@/theme/ThemeProvider";
 
 const TABS = ["html", "css", "javascript"];
 
@@ -27,7 +26,6 @@ function MobileEditor() {
   const [js, setJsValue] = useJs();
   const [code, setCodesValue] = useCodes();
   const [currTab, setCurrTab] = useState("html");
-  const { resolvedTheme, setTheme, mounted } = useTheme();
 
   const currentValue = useMemo(
     () => (currTab === "html" ? html : currTab === "css" ? css : js),
@@ -73,12 +71,6 @@ function MobileEditor() {
     toast.success("Code formatted");
   }, [html, css, js, setHtmlValue, setCssValue, setJsValue]);
 
-  const toggleTheme = () => {
-    const next = resolvedTheme === "dark" ? "light" : "dark";
-    setTheme(next);
-    toast.success(`Switched to ${next === "dark" ? "Dark" : "Light"} mode`);
-  };
-
   // Debounced live compilation.
   const compileCode = useMemo(
     () =>
@@ -120,18 +112,6 @@ function MobileEditor() {
         </ToggleGroup>
 
         <div className="flex items-center gap-1.5">
-          <button
-            type="button"
-            onClick={toggleTheme}
-            className="flex h-7 items-center justify-center rounded border border-zinc-300 bg-white px-2 text-xs font-medium text-zinc-700 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200"
-            title={`Switch to ${mounted && resolvedTheme === "dark" ? "Light" : "Dark"} Mode`}
-          >
-            {mounted && resolvedTheme === "dark" ? (
-              <Sun className="h-3.5 w-3.5 text-amber-400" />
-            ) : (
-              <Moon className="h-3.5 w-3.5 text-zinc-700 dark:text-zinc-300" />
-            )}
-          </button>
           <button
             type="button"
             onClick={handleFormat}
