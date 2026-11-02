@@ -312,6 +312,199 @@ document.getElementById("btn-reset").addEventListener("click", () => {
   console.log("Count reset to 0");
 });`,
   },
+  {
+    id: "responsive_navbar",
+    name: "Responsive Navigation",
+    html: `<nav class="navbar">
+  <div class="nav-container">
+    <div class="nav-logo">Brand</div>
+    <ul class="nav-menu" id="nav-menu">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="hamburger" id="hamburger">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+</nav>
+<main class="hero-section">
+  <h1>Welcome to Your Website</h1>
+  <p>Create responsive layouts with ease</p>
+</main>`,
+    css: `* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #0a0a0a;
+  color: #fff;
+}
+.navbar {
+  background: #000;
+  border-bottom: 1px solid #333;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.nav-logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+.nav-menu {
+  display: flex;
+  list-style: none;
+  gap: 2rem;
+}
+.nav-menu a {
+  color: #fff;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+.nav-menu a:hover {
+  color: #888;
+}
+.hamburger {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+}
+.hamburger span {
+  width: 25px;
+  height: 3px;
+  background: #fff;
+  margin: 5px 0;
+  transition: 0.3s;
+}
+.hero-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 80px);
+  text-align: center;
+}
+.hero-section h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+.hero-section p {
+  font-size: 1.2rem;
+  color: #aaa;
+}
+@media (max-width: 768px) {
+  .hamburger { display: flex; }
+  .nav-menu {
+    position: absolute;
+    left: -100%;
+    top: 70px;
+    flex-direction: column;
+    background: #000;
+    width: 100%;
+    text-align: center;
+    transition: 0.3s;
+  }
+  .nav-menu.active {
+    left: 0;
+  }
+  .hero-section h1 { font-size: 2rem; }
+}`,
+    js: `const hamburger = document.getElementById("hamburger");
+const navMenu = document.getElementById("nav-menu");
+hamburger.addEventListener("click", () => {
+  navMenu.classList.toggle("active");
+});`,
+  },
+  {
+    id: "form_template",
+    name: "Contact Form",
+    html: `<div class="form-container">
+  <h2>Contact Us</h2>
+  <form id="contact-form">
+    <input type="text" id="name" placeholder="Your Name" required />
+    <input type="email" id="email" placeholder="Your Email" required />
+    <textarea id="message" placeholder="Your Message" rows="5" required></textarea>
+    <button type="submit">Send Message</button>
+    <div id="form-feedback"></div>
+  </form>
+</div>`,
+    css: `.form-container {
+  max-width: 500px;
+  margin: 50px auto;
+  background: #000;
+  padding: 2rem;
+  border: 1px solid #333;
+  border-radius: 12px;
+}
+.form-container h2 {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+input, textarea {
+  padding: 10px 12px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 6px;
+  color: #fff;
+  font-family: inherit;
+  transition: border-color 0.3s;
+}
+input:focus, textarea:focus {
+  outline: none;
+  border-color: #555;
+}
+button {
+  padding: 10px;
+  background: #fff;
+  color: #000;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+button:hover {
+  background: #ddd;
+}
+#form-feedback {
+  text-align: center;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+}`,
+    js: `const form = document.getElementById("contact-form");
+const feedback = document.getElementById("form-feedback");
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const name = document.getElementById("name").value;
+  const email = document.getElementById("email").value;
+  const message = document.getElementById("message").value;
+  console.log("Form Submitted:", { name, email, message });
+  feedback.textContent = "Thank you! Your message has been received.";
+  feedback.style.color = "#4ade80";
+  form.reset();
+  setTimeout(() => {
+    feedback.textContent = "";
+  }, 3000);
+});`,
+  },
 ];
 
 export const CODE_TYPES = ["html", "css", "javascript"];
