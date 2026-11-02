@@ -14,7 +14,8 @@ export default function Page() {
   const { resolvedTheme, mounted } = useTheme();
 
   useEffect(() => {
-    setPreload(false);
+    const timer = setTimeout(() => setPreload(false), 0);
+    return () => clearTimeout(timer);
   }, []);
 
   return (
