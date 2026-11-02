@@ -28,6 +28,7 @@ const Editor = () => {
   const [js, setJsValue] = useJs();
   const [code, setCodesValue] = useCodes();
   const [selectedPreset, setSelectedPreset] = useState("default");
+  const [mounted, setMounted] = useState(false);
 
   const compileCode = useCallback(() => {
     setCodesValue(compile({ html, css, js }));
@@ -47,6 +48,10 @@ const Editor = () => {
       toast.success("Loaded shared code");
     }
   }, [setHtmlValue, setCssValue, setJsValue]);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleChange = useCallback(
     (val, type) => {
@@ -247,7 +252,7 @@ const Editor = () => {
         </ResizablePanelGroup>
       </div>
 
-      <Footer stats={stats} />
+      <Footer stats={mounted ? stats : null} />
     </div>
   );
 };

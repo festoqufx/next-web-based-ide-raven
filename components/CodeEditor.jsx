@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState, useEffect } from "react";
 import { Copy } from "lucide-react";
 import { toast } from "sonner";
 import { loadLanguage } from "@uiw/codemirror-extensions-langs";
@@ -16,12 +16,17 @@ const DOT = {
 
 export default function CodeEditor({ type, value, onChange }) {
   const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
   const codeValue = value ?? "";
   const label = CODE_LABELS[type] ?? "Code";
   const languageTag = type === "javascript" ? "JS" : type.toUpperCase();
   const hasValue = codeValue.trim().length > 0;
   const cmOptions = useMemo(() => getCmOptions(resolvedTheme), [resolvedTheme]);
   const languageExtension = useMemo(() => loadLanguage(type), [type]);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const stats = useMemo(() => {
     const lines = codeValue.length > 0 ? codeValue.split("\n").length : 0;
@@ -67,7 +72,7 @@ export default function CodeEditor({ type, value, onChange }) {
             · {label}
           </span>
           <span className="hidden text-[11px] text-zinc-500 md:inline dark:text-zinc-400">
-            · {stats}
+            {mounted && `· ${stats}`}
           </span>
         </div>
         <button
