@@ -21,7 +21,4 @@
 
 
 
-- Live HTML/CSS/JS editing with instant preview updates.
-- Per-editor language-aware workspace with copy actions and real-time code stats (lines/chars).
-- Fast editing experience powered by memoized editor options and language extensions.
-- Built-in utilities for formatting, reset, theme switching, download, and opening preview in a new tab.
+
