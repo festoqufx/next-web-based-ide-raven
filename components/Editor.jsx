@@ -15,32 +15,49 @@ import PreviewPane from "@/components/PreviewPane";
 import FileImport from "@/components/FileImport";
 import ShareCodeDialog from "@/components/ShareCodeDialog";
 import KeyboardShortcutsDialog from "@/components/KeyboardShortcutsDialog";
+import { debounced } from "@/lib/debounced";
 import useCodes from "@/hooks/useCodes";
 import useHtml from "@/hooks/useHtml";
 import useCss from "@/hooks/useCss";
 import useJs from "@/hooks/useJs";
 
 const ACTION_BUTTON_CLASS = "flex h-10 items-center gap-2.5 rounded-lg border border-zinc-300 bg-white px-4 text-xs font-semibold text-zinc-700 shadow-sm transition-all duration-200 hover:border-zinc-400 hover:bg-zinc-50 hover:shadow-md hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white active:scale-95 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:border-zinc-600 dark:hover:bg-zinc-700 dark:hover:text-white dark:focus-visible:ring-zinc-500 dark:focus-visible:ring-offset-zinc-950";
+const createCompileId = () => `${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
 const Editor = () => {
   const [html, setHtmlValue] = useHtml();
   const [css, setCssValue] = useCss();
   const [js, setJsValue] = useJs();
   const [code, setCodesValue] = useCodes();
+  const [compileId, setCompileId] = useState(() => createCompileId());
   const [selectedPreset, setSelectedPreset] = useState("default");
   const [mounted, setMounted] = useState(false);
 
-  const compileCode = useCallback(() => {
-    setCodesValue(compile({ html, css, js }));
-  }, [html, css, js, setCodesValue]);
+  const compileCode = useCallback((nextHtml, nextCss, nextJs) => {
+    const nextCompileId = createCompileId();
+    setCompileId(nextCompileId);
+    setCodesValue(
+      compile({ html: nextHtml, css: nextCss, js: nextJs, compileId: nextCompileId })
+    );
+  }, [setCodesValue]);
+
+  const debouncedCompile = useMemo(() => {
+    return debounced(() => compileCode(html, css, js), 150);
+  }, [compileCode, html, css, js]);
 
   useEffect(() => {
-    compileCode();
-  }, [compileCode]);
+    debouncedCompile();
+    return () => debouncedCompile.cancel();
+  }, [debouncedCompile]);
 
   useEffect(() => {
     const urlCode = decodeCodeFromUrl();
-    if (urlCode && urlCode.html && urlCode.css && urlCode.js) {
+    if (
+      urlCode &&
+      typeof urlCode.html === "string" &&
+      typeof urlCode.css === "string" &&
+      typeof urlCode.js === "string"
+    ) {
       setHtmlValue(urlCode.html);
       setCssValue(urlCode.css);
       setJsValue(urlCode.js);
@@ -80,10 +97,10 @@ const Editor = () => {
     setHtmlValue(DEFAULT_HTML);
     setCssValue(DEFAULT_CSS);
     setJsValue(DEFAULT_JS);
-    setCodesValue(compile({ html: DEFAULT_HTML, css: DEFAULT_CSS, js: DEFAULT_JS }));
+    compileCode(DEFAULT_HTML, DEFAULT_CSS, DEFAULT_JS);
     setSelectedPreset("default");
     toast.success("Reset to default workspace");
-  }, [setHtmlValue, setCssValue, setJsValue, setCodesValue]);
+  }, [setHtmlValue, setCssValue, setJsValue, compileCode]);
 
   const handleFormat = useCallback(() => {
     const formatted = formatCode({ html, css, js });
@@ -247,7 +264,11 @@ const Editor = () => {
           <ResizableHandle withHandle className="bg-zinc-200 hover:bg-zinc-300 dark:bg-zinc-800 dark:hover:bg-zinc-700" />
 
           <ResizablePanel defaultSize={40} minSize={20} className="bg-zinc-50 p-2 dark:bg-zinc-950">
-            <PreviewPane code={code} onOpenNewTab={handleOpenPreview} />
+            <PreviewPane
+              code={code}
+              compileId={compileId}
+              onOpenNewTab={handleOpenPreview}
+            />
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>

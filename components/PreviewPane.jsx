@@ -1,12 +1,15 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Monitor, ExternalLink, RotateCcw, Terminal, ChevronUp, ChevronDown } from "lucide-react";
 import { Button } from "./ui/button";
 import ConsolePanel from "./ConsolePanel";
 
+const MAX_CONSOLE_LOGS = 250;
+
 export default function PreviewPane({
   code,
   title = "Live Output",
+  compileId,
   onOpenNewTab,
   onRefresh,
   children,
@@ -14,6 +17,7 @@ export default function PreviewPane({
   const [logs, setLogs] = useState([]);
   const [showConsole, setShowConsole] = useState(false);
   const [key, setKey] = useState(0);
+  const iframeRef = useRef(null);
 
   // Clear logs when code is re-compiled
   useEffect(() => {
@@ -23,23 +27,32 @@ export default function PreviewPane({
   // Handle postMessage logs from compile iframe
   useEffect(() => {
     const handleMessage = (e) => {
-      if (e.data && e.data.type === "IDE_CONSOLE_LOG") {
-        setLogs((prev) => [
+      if (e.source !== iframeRef.current?.contentWindow) {
+        return;
+      }
+      if (!e.data || e.data.type !== "IDE_CONSOLE_LOG") return;
+      if (compileId && e.data.compileId !== compileId) return;
+
+      setLogs((prev) => {
+        const next = [
           ...prev,
           {
             level: e.data.level,
             args: e.data.args,
             timestamp: e.data.timestamp || new Date().toLocaleTimeString(),
           },
-        ]);
-      }
+        ];
+        return next.slice(-MAX_CONSOLE_LOGS);
+      });
     };
+
     window.addEventListener("message", handleMessage);
     return () => window.removeEventListener("message", handleMessage);
-  }, []);
+  }, [compileId]);
 
   const handleManualRefresh = () => {
     setKey((prev) => prev + 1);
+    setLogs([]);
     if (onRefresh) onRefresh();
   };
 
@@ -116,9 +129,11 @@ export default function PreviewPane({
 
       <div className="relative flex-1 bg-white">
         <iframe
+          ref={iframeRef}
           key={key}
           title={`${title} live preview`}
           sandbox="allow-scripts allow-modals allow-forms allow-popups"
+          loading="lazy"
           className="h-full w-full bg-white"
           srcDoc={code}
         />

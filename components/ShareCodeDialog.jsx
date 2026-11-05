@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Share2, Copy, Check, X } from "lucide-react";
 import { Button } from "./ui/button";
 import { copyShareLink } from "@/lib/sharing";
@@ -20,11 +20,38 @@ export default function ShareCodeDialog({ codeState }) {
       toast.success("Share link copied to clipboard!");
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
-      toast.error("Failed to generate share link");
+      toast.error(error?.message || "Failed to generate share link");
     } finally {
       setIsLoading(false);
     }
   };
+
+  const handleCopyShareUrl = useCallback(async () => {
+    if (!navigator?.clipboard) {
+      toast.error("Clipboard API is unavailable in this browser");
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+      toast.success("Copied!");
+    } catch (error) {
+      toast.error("Could not copy share link");
+    }
+  }, [shareUrl]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") {
+        setIsOpen(false);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isOpen]);
 
   return (
     <>
@@ -86,12 +113,7 @@ export default function ShareCodeDialog({ codeState }) {
                       <span className="hidden sm:inline">New Link</span>
                     </Button>
                     <Button
-                      onClick={() => {
-                        navigator.clipboard.writeText(shareUrl);
-                        setCopied(true);
-                        setTimeout(() => setCopied(false), 2000);
-                        toast.success("Copied!");
-                      }}
+                      onClick={handleCopyShareUrl}
                       className="flex-1 gap-1"
                     >
                       {copied ? (

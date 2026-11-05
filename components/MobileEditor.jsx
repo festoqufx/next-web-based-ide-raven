@@ -19,12 +19,14 @@ import useCss from "@/hooks/useCss";
 import useJs from "@/hooks/useJs";
 
 const TABS = ["html", "css", "javascript"];
+const createCompileId = () => `${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
 function MobileEditor() {
   const [html, setHtmlValue] = useHtml();
   const [css, setCssValue] = useCss();
   const [js, setJsValue] = useJs();
   const [code, setCodesValue] = useCodes();
+  const [compileId, setCompileId] = useState(() => createCompileId());
   const [currTab, setCurrTab] = useState("html");
 
   const currentValue = useMemo(
@@ -59,7 +61,16 @@ function MobileEditor() {
     setHtmlValue(DEFAULT_HTML);
     setCssValue(DEFAULT_CSS);
     setJsValue(DEFAULT_JS);
-    setCodesValue(compile({ html: DEFAULT_HTML, css: DEFAULT_CSS, js: DEFAULT_JS }));
+    const nextCompileId = createCompileId();
+    setCompileId(nextCompileId);
+    setCodesValue(
+      compile({
+        html: DEFAULT_HTML,
+        css: DEFAULT_CSS,
+        js: DEFAULT_JS,
+        compileId: nextCompileId,
+      })
+    );
     toast.success("Reset workspace");
   }, [setHtmlValue, setCssValue, setJsValue, setCodesValue]);
 
@@ -75,13 +86,16 @@ function MobileEditor() {
   const compileCode = useMemo(
     () =>
       debounced(() => {
-        setCodesValue(compile({ html, css, js }));
+        const nextCompileId = createCompileId();
+        setCompileId(nextCompileId);
+        setCodesValue(compile({ html, css, js, compileId: nextCompileId }));
       }, 150),
     [html, css, js, setCodesValue]
   );
 
   useEffect(() => {
     compileCode();
+    return () => compileCode.cancel();
   }, [compileCode]);
 
   const stats = useMemo(() => {
@@ -164,7 +178,11 @@ function MobileEditor() {
           <ResizableHandle withHandle className="bg-zinc-200 hover:bg-zinc-300 dark:bg-zinc-800 dark:hover:bg-zinc-700" />
 
           <ResizablePanel defaultSize={45} minSize={20} className="bg-zinc-50 p-2 dark:bg-zinc-950">
-            <PreviewPane code={code} onOpenNewTab={handleOpenPreview} />
+            <PreviewPane
+              code={code}
+              compileId={compileId}
+              onOpenNewTab={handleOpenPreview}
+            />
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>

@@ -1,29 +1,37 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { HelpCircle, X } from "lucide-react";
 import { Button } from "./ui/button";
 
 const SHORTCUTS = [
-  { keys: ["Ctrl/Cmd", "+", "S"], action: "Download compiled HTML" },
-  { keys: ["Ctrl/Cmd", "+", "Enter"], action: "Open preview in new tab" },
-  { keys: ["Ctrl/Cmd", "+", "Shift", "+", "F"], action: "Format all code" },
-  { keys: ["Ctrl/Cmd", "+", "Shift", "+", "?"], action: "Show keyboard shortcuts" },
+  { keys: ["Ctrl/Cmd", "S"], action: "Download compiled HTML" },
+  { keys: ["Ctrl/Cmd", "Enter"], action: "Open preview in new tab" },
+  { keys: ["Ctrl/Cmd", "Shift", "F"], action: "Format all code" },
+  { keys: ["Ctrl/Cmd", "Shift", "?"], action: "Show keyboard shortcuts" },
   { keys: ["Esc"], action: "Close dialogs" },
 ];
 
 export default function KeyboardShortcutsDialog() {
   const [isOpen, setIsOpen] = useState(false);
 
-  // Register global keyboard shortcut
-  const handleKeyDown = (e) => {
-    if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === "?") {
+  const handleKeyDown = useCallback((e) => {
+    const isToggleShortcut =
+      (e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === "?" || e.key === "/");
+    if (isToggleShortcut) {
       e.preventDefault();
-      setIsOpen(!isOpen);
+      setIsOpen((prev) => !prev);
+      return;
     }
-  };
+    if (e.key === "Escape") {
+      setIsOpen(false);
+    }
+  }, []);
 
-  // Effect hook is not needed here; this would be handled in parent component
-  
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleKeyDown]);
+
   return (
     <>
       <Button
