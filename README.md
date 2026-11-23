@@ -22,4 +22,11 @@
 </p>
 
 
+## Highlights
 
+- Live HTML/CSS/JS editing with instant preview updates.
+- Per-editor language-aware workspace with copy actions and real-time code stats (lines/chars).
+- Fast editing experience powered by memoized editor options, language extensions, and debounced compile updates.
+- Built-in utilities for formatting, reset, theme switching, download, and opening preview in a new tab.
+- Shareable URL support with UTF-8-safe encoding and clipboard-aware error handling.
+- Enhanced live console capture with compile-session isolation and unhandled promise rejection reporting.
